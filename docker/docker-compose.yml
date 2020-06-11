@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  php:
+    build: './php'
+    volumes:
+      - ../src/html:/var/www/html
+      - static-file-vol:/var/www/uploads
+    depends_on:
+      - pgsql
+    environment:
+      - POSTGRES_DB=event_presention_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Bening20!9
+      - WWW_DIR=/var/www
+      - UPLOAD_DIR_PHOTO_JOURNALIST=/var/www/uploads/image/journalist
+
+  apache:
+    build: './apache'
+    depends_on:
+      - php
+    ports:
+      - '8080:80'
+    volumes:
+      - ../src/html:/var/www/html
+      - static-file-vol:/var/www/uploads
+
+  pgsql:
+    build: './postgresql'
+    environment:
+      - POSTGRES_DB=event_presention_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Bening20!9
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgsql-vol:/var/lib/postgresql/data
+
+volumes:
+  pgsql-vol:
+  static-file-vol:
+
+networks:
+  default:
+    external:
+      name: event-presence-net
